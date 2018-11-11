@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文字粒子化</title>
+</head>
+<body>
+<canvas id='canvas' width=1000 height=500 style='background-color:#000'>This browser does not support html5.</canvas>
+<script>
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+
+    var pixels = [];  // 存储像素数据
+    var space = 1;    // 遗弃部分像素点
+
+    drawText('Canvas');
+    getPixels();
+    drawPixels();
+
+    // 拾取像素点
+    function getPixels() {
+        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        for (var x = 0; x < imageData.width; x += space) {
+            for (var y = 0; y < imageData.height; y += space) {
+                var i = (y * imageData.width + x) * 4;
+
+                // 通过rgba中的r判断，拾取有色的图片部分
+                if (imageData.data[i] > 0) {
+                    pixels.push({
+                        x: x,
+                        y: y,
+                        fillStyle: 'rgba(' + imageData.data[i] + ',' + imageData.data[i + 1] + ',' + imageData.data[i + 2] + ',' + imageData.data[i + 3] + ')'
+                    })
+                }
+            }
+        }
+        console.log(pixels.length);
+    }
+
+    // 将保存的像素点重新绘制
+    function drawPixels(){
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        var scale = 1;  // 缩放
+        var pos = {x: 0, y: 0}; // 绘制位置
+
+        for (var i = 0; i < pixels.length; i++) {
+            context.fillStyle = pixels[i].fillStyle;
+            context.fillRect(pixels[i].x * scale + pos.x + Math.random() * 10, pixels[i].y * scale + pos.y + Math.random() * 10, 1, 1);
+        }
+    }
+
+    function drawText(text) {
+        context.font = "100px 微软雅黑 bold";
+        context.fillStyle = "rgba(168,168,168,1)";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(text, canvas.width / 2, canvas.height / 2);
+    }
+</script>
+</body>
+</html>

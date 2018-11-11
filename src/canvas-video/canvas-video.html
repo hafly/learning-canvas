@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video/Canvas Demo 1</title>
+    <style>
+        body {
+            background: black;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        #video {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="480" height="360"></canvas>
+<video id="video" controls="" loop="" autoplay="autoplay">
+    <source src="video.webm" type="video/webm">
+    <source src="video.ogg" type="video/ogg">
+    <source src="video.mp4" type="video/mp4">
+</video>
+<script>
+    // 参考：http://html5doctor.com/video-canvas-magic/
+    var video = document.getElementById('video');
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+
+    video.addEventListener('play', function () {
+        draw(this, context, canvas.clientWidth, canvas.clientHeight);
+    }, false);
+
+    function draw(v, c, w, h) {
+        if (v.paused || v.ended) return false;
+        c.drawImage(v, 0, 0, w, h);
+        setTimeout(draw, 20, v, c, w, h);
+    }
+</script>
+</body>
+</html>
